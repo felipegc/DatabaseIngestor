@@ -1,11 +1,12 @@
 package com.magicbq.ingestor;
 
 import com.google.schemaconversion.converter.bigquery.OracleBigQueryConverter;
+import com.google.schemaconversion.converter.bigquery.VerticaBigQueryConverter;
 import com.google.schemaconversion.exceptions.SourceException;
 import com.google.schemaconversion.source.SourceConnectionConfiguration;
-import com.google.schemaconversion.source.oracle.OracleConnector;
-import com.google.schemaconversion.source.oracle.OracleSourceDefinition;
 import com.google.schemaconversion.source.schema.Database;
+import com.google.schemaconversion.source.vertica.VerticaConnector;
+import com.google.schemaconversion.source.vertica.VerticaSourceDefinition;
 import com.google.schemaconversion.target.bigquery.Dataset;
 import com.google.schemaconversion.target.bigquery.Table;
 import com.magicbq.ingestor.Schemas.ColumnInfo;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class SchemaConversionUtil {
 
-  private OracleSourceDefinition getSourceDefinition(String schemaName, OjdbcConnector connector)
+  private VerticaSourceDefinition getSourceDefinition(String schemaName, OjdbcConnector connector)
       throws Exception {
     SourceConnectionConfiguration connectionConfiguration =
         new SourceConnectionConfiguration()
@@ -29,11 +30,19 @@ public class SchemaConversionUtil {
             .setPassword(connector.getCredentials().getPassword())
             .setUsername(connector.getCredentials().getUsername())
             .setDatabase(connector.getDatabase());
-    OracleSourceDefinition sourceDefinition;
+    //    OracleSourceDefinition sourceDefinition; // TODO: felipegc make it generic
+    //    try {
+    //      sourceDefinition = new OracleConnector(connectionConfiguration).loadSourceDefinition();
+    //    } catch (SourceException libraryException) {
+    //      throw new Exception(libraryException); // TODO: felipegc improve the exception
+    //    }
+
+    VerticaSourceDefinition sourceDefinition;
+
     try {
-      sourceDefinition = new OracleConnector(connectionConfiguration).loadSourceDefinition();
+      sourceDefinition = new VerticaConnector(connectionConfiguration).loadSourceDefinition();
     } catch (SourceException libraryException) {
-      throw new Exception(libraryException); // TODO: felipegc improve the exception
+      throw new Exception(libraryException);
     }
 
     // Need to convert only the passed one schema.
@@ -44,8 +53,9 @@ public class SchemaConversionUtil {
   }
 
   private List<TableInfo> listTables(
-      OracleSourceDefinition sourceDefinition, String schemaName, String[] tableNamesPattern) {
-    OracleBigQueryConverter converter = new OracleBigQueryConverter();
+      VerticaSourceDefinition sourceDefinition, String schemaName, String[] tableNamesPattern) {
+//    OracleBigQueryConverter converter = new OracleBigQueryConverter();
+    VerticaBigQueryConverter converter = new VerticaBigQueryConverter();
     Properties conversionProperties = new Properties();
     Map<String, Dataset> dataSets =
         converter.convert(sourceDefinition, conversionProperties).getDatasets();
@@ -56,7 +66,7 @@ public class SchemaConversionUtil {
             datasetEntry.getValue(), datasetEntry.getKey(), tableNamesPattern);
       }
     }
-    //return new Schemas(new DatabaseInfo[] {});
+    // return new Schemas(new DatabaseInfo[] {});
     return new ArrayList<>();
   }
 
@@ -111,19 +121,22 @@ public class SchemaConversionUtil {
   /**
    * Retrieves the table info fetched on oracle by schema conversion tool.
    *
-   * @param schema         what schema to be searched by.
-   * @param tables         the tables we want to retrieve.
+   * @param schema what schema to be searched by.
+   * @param tables the tables we want to retrieve.
    * @param ojdbcConnector holds the whole information to connect to oracle.
    */
-  public List<TableInfo> getTablesInfo(String schema, String[] tables,
-      OjdbcConnector ojdbcConnector) throws Exception { // TODO: felipegc treat this exception
-    OracleSourceDefinition sourceDefinition = getSourceDefinition(schema,
-        ojdbcConnector); // TODO: felipegc validate if we need all these schema/database stuff
+  public List<TableInfo> getTablesInfo(
+      String schema, String[] tables, OjdbcConnector ojdbcConnector)
+      throws Exception { // TODO: felipegc treat this exception
+    VerticaSourceDefinition sourceDefinition = getSourceDefinition(schema, ojdbcConnector);
+    // TODO: felipegc make it generic
+    //    OracleSourceDefinition sourceDefinition = getSourceDefinition(schema,
+    //        ojdbcConnector); // TODO: felipegc validate if we need all these schema/database stuff
     List<TableInfo> tableInfos = listTables(sourceDefinition, schema, tables);
     // TODO: felipegc remove this
     // GsonBuilder gsonBuilder = new GsonBuilder(); // TODO: felipegc remove
     // final String opa = gsonBuilder.create().toJson(tableInfos);
-    //System.out.println(opa);
+    // System.out.println(opa);
 
     return tableInfos;
   }

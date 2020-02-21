@@ -185,7 +185,20 @@ public class TypeGeneratorUtil {
         ps.setDate(index, date);
       };
 
+  private static final ColumnData VARCHAR_GENERATOR = // vertica
+      (PreparedStatement ps, int index) -> {
+        String fakeVarchar2 = "PAKISTAN";//this is a fake varchar2
+        ps.setString(index, fakeVarchar2);
+      };
+
+  private static final ColumnData INT_GENERATOR = // vertica
+      (PreparedStatement ps, int index) -> {
+        String fakeVarchar2 = "PAKISTAN";//this is a fake varchar2
+        ps.setString(index, fakeVarchar2);
+      };
+
   static {
+    // ORACLE
     TYPE_GENERATOR.put("long", LONG_GENERATOR);
     TYPE_GENERATOR.put("nchar", NCHAR_GENERATOR);
     TYPE_GENERATOR.put("urowid", UROWID_GENERATOR);
@@ -212,6 +225,10 @@ public class TypeGeneratorUtil {
     TYPE_GENERATOR.put("xmltype", XMLTYPE_GENERATOR);
     TYPE_GENERATOR.put("timestamp with local time zone",TYPE_TIMESTAMP_WITH_LOCAL_TZ);
     TYPE_GENERATOR.put("timestamp with time zone",TYPE_TIMESTAMP_WITH_TZ);
+
+    // VERTICA
+    TYPE_GENERATOR.put("int", NUMBER_GENERATOR);
+    TYPE_GENERATOR.put("varchar", VARCHAR2_GENERATOR);
 
   }
 

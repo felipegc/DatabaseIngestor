@@ -1,18 +1,24 @@
 package com.magicbq.ingestor;
 
+import com.magicbq.ingestor.Schemas.ColumnInfo;
 import com.magicbq.ingestor.Schemas.TableInfo;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.BFILE;
 
@@ -56,6 +62,15 @@ public class App {
         schemaConversionUtil.getTablesInfo(schemaToBePopulated, tables, ojdbcConnector);
 
     long start = System.currentTimeMillis();
+
+//    //TODO: felipegc remove it
+//    for (TableInfo tableInfo : tablesInfo) {
+//            List<DataGenerator> futures = new ArrayList<>();
+//            for (int i = 0; i < numberOfThreads; i++) {
+//              String executorName = tableInfo.getName() + "-" + (i + 1);
+//              App.call(tableInfo, schemaToBePopulated, ojdbcConnector, numberOfLinesPerThread, batchSize, executorName);
+//            }
+//    }
 
     for (TableInfo tableInfo : tablesInfo) {
       List<DataGenerator> futures = new ArrayList<>();
@@ -166,6 +181,68 @@ public class App {
       }
     } catch (Exception ex) {
       System.out.println(ex);
+    }
+  }
+
+
+  public static InsertResult call(TableInfo tableInfo, String schema, OjdbcConnector ojdbcConnector, Integer numberOfLinesPerThread,
+    Integer batchSize, String name) throws Exception{
+
+    long stInsert = System.currentTimeMillis();
+
+    List<ColumnInfo> columns = // TODO: felipegc make it generic
+        Arrays.stream(tableInfo.getColumns())
+            .filter(
+                (c) ->
+                    !c.getOriginalType().equals("bfile")
+                        && !c.getOriginalType().equals("sdo_geometry")
+                        && !c.getOriginalType().equals("rowid"))
+            .collect(Collectors.toList());
+
+    String columnsName = columns.stream().map((c) -> c.getName()).collect(Collectors.joining(","));
+
+    String columnsRoom = String.join(",", Collections.nCopies(columns.size(), "?"));
+    String query =
+        String.format("INSERT INTO %s.%s(%s) VALUES(%s)", schema, tableInfo.getName(), columnsName, columnsRoom);
+    System.out.println("Executing query: " + query);
+
+    try (Connection conn = ojdbcConnector.getConnection()) {
+      int numberOfBatches = numberOfLinesPerThread / batchSize;
+      int modBatch = numberOfLinesPerThread % batchSize;
+
+      for (int a = 0; a < numberOfBatches; a++) {
+        executeBatch(columns, query, conn, batchSize);
+      }
+
+      if (modBatch > 0) {
+        executeBatch(columns, query, conn, modBatch);
+      }
+    }
+
+    // Thread.sleep(20000);
+
+    long enInsert = System.currentTimeMillis();
+    long totalTimeInsert = (enInsert - stInsert) / 1000;
+    //    System.out.println(
+    //        String.format(
+    //            "Time spent for inserting %s lines in %s:%s was: %s seconds",
+    //            numberOfLinesPerThread, schema, tableInfo.getName(), totalTimeInsert));
+
+    return new InsertResult(name, Long.toString(totalTimeInsert));
+  }
+
+  public static void executeBatch(List<ColumnInfo> columns, String query, Connection conn, int rows)
+      throws SQLException {
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+      for (int x = 1; x <= rows; x++) {
+        for (int i = 1; i <= columns.size(); i++) {
+          TypeGeneratorUtil.generateValue(columns.get(i - 1).getOriginalType(), stmt, i);
+        }
+        stmt.addBatch();
+      }
+
+      stmt.executeBatch();
+      System.out.println("Batch successfully executed");
     }
   }
 }

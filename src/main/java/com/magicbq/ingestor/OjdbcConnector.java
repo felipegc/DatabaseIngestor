@@ -7,7 +7,8 @@ import java.util.Properties;
 
 public class OjdbcConnector {
 
-  private static final String JDBC_CONNECTION_STRING = "jdbc:oracle:thin:@%s:%s:%s";
+  //private static final String JDBC_CONNECTION_STRING = "jdbc:oracle:thin:@%s:%s:%s";
+  private static final String JDBC_CONNECTION_STRING = "jdbc:vertica://%s:%s/%s"; // TODO:felipegc make it generic //jdbc:vertica://34.66.206.172:5433/VMart
 
   private Properties connectionProperties;
   private String host;
@@ -47,7 +48,8 @@ public class OjdbcConnector {
   //TODO: felipegc we should create a pool of connections. There are plenty of libs to do that.
   public Connection getConnection() throws ClassNotFoundException, SQLException {
     try {
-      Class.forName("oracle.jdbc.driver.OracleDriver");
+      //Class.forName("oracle.jdbc.driver.OracleDriver"); // TODO:felipegc make it generic
+      Class.forName("com.vertica.jdbc.Driver");
       return DriverManager.getConnection(
           String.format(JDBC_CONNECTION_STRING, host, port, database),
           getConnectionProperties());

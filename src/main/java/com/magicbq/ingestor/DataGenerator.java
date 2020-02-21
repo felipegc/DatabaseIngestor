@@ -54,7 +54,7 @@ public class DataGenerator implements Callable<InsertResult> {
 
     long stInsert = System.currentTimeMillis();
 
-    List<ColumnInfo> columns =
+    List<ColumnInfo> columns = // TODO: felipegc make it generic
         Arrays.stream(tableInfo.getColumns())
             .filter(
                 (c) ->
