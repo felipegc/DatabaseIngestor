@@ -1,5 +1,13 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.main;
 
+import com.magicbq.databaseingestor.objects.Credentials;
+import com.magicbq.databaseingestor.ingestor.IngestorService;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
+import com.magicbq.databaseingestor.ingestor.OracleIngestorService;
+import com.magicbq.databaseingestor.schemaconversion.OracleSchemaConversion;
+import com.magicbq.databaseingestor.schemaconversion.SchemaConversion;
+import com.magicbq.databaseingestor.ingestor.VerticaIngestorService;
+import com.magicbq.databaseingestor.schemaconversion.VerticaSchemaConversion;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;

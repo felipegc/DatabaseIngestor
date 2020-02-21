@@ -1,6 +1,10 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.ingestor;
 
-import com.magicbq.ingestor.Schemas.TableInfo;
+import com.magicbq.databaseingestor.datagenerator.OracleDataGenerator;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
+import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
+import com.magicbq.databaseingestor.datagenerator.DataGenerator;
+import com.magicbq.databaseingestor.schemaconversion.SchemaConversion;
 
 public class OracleIngestorService extends IngestorService {
 

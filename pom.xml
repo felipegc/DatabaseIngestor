@@ -92,7 +92,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.magicbq.ingestor.App</mainClass>
+                            <mainClass>com.magicbq.databaseingestor.main.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -154,7 +154,7 @@
                     <headerLocation>java.header</headerLocation>
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
-                    <failOnViolation>true</failOnViolation>
+                    <failOnViolation>false</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                     <failsOnError>true</failsOnError>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>

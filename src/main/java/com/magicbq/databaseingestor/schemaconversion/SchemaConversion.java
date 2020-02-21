@@ -1,4 +1,4 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.schemaconversion;
 
 import com.google.schemaconversion.converter.bigquery.RDBMSBigQueryConverter;
 import com.google.schemaconversion.exceptions.SourceException;
@@ -7,8 +7,9 @@ import com.google.schemaconversion.source.rdbms.RdbmSourceDefinition;
 import com.google.schemaconversion.source.schema.Database;
 import com.google.schemaconversion.target.bigquery.Dataset;
 import com.google.schemaconversion.target.bigquery.Table;
-import com.magicbq.ingestor.Schemas.ColumnInfo;
-import com.magicbq.ingestor.Schemas.TableInfo;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
+import com.magicbq.databaseingestor.objects.Schemas.ColumnInfo;
+import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

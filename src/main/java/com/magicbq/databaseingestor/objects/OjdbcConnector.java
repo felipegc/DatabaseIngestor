@@ -1,4 +1,4 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.objects;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

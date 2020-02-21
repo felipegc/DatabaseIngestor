@@ -1,9 +1,10 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.schemaconversion;
 
 import com.google.schemaconversion.converter.bigquery.VerticaBigQueryConverter;
 import com.google.schemaconversion.source.SourceConnectionConfiguration;
 import com.google.schemaconversion.source.vertica.VerticaConnector;
 import com.google.schemaconversion.source.vertica.VerticaSourceDefinition;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
 
 public class VerticaSchemaConversion extends SchemaConversion {
 

@@ -1,6 +1,6 @@
 // Copyright 2018 Google Inc. All Rights Reserved.
 
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.objects;
 
 import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;

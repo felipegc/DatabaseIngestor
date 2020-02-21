@@ -1,4 +1,4 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.objects;
 
 public class Credentials {
   private final String username;

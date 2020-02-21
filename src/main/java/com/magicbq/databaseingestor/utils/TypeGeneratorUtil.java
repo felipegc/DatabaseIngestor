@@ -1,4 +1,4 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.utils;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;

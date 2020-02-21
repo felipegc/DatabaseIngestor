@@ -1,7 +1,10 @@
-package com.magicbq.ingestor;
+package com.magicbq.databaseingestor.datagenerator;
 
-import com.magicbq.ingestor.Schemas.ColumnInfo;
-import com.magicbq.ingestor.Schemas.TableInfo;
+import com.magicbq.databaseingestor.objects.InsertResult;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
+import com.magicbq.databaseingestor.objects.Schemas.ColumnInfo;
+import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
+import com.magicbq.databaseingestor.utils.TypeGeneratorUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
