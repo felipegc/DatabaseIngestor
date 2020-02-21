@@ -5,7 +5,6 @@ import com.magicbq.ingestor.Schemas.TableInfo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,16 +14,16 @@ import java.util.stream.Collectors;
  * Responsible for holding the thread task called by the executor. It will populate the amount of
  * lines into a table in a schema(oracle).
  */
-public class DataGenerator implements Callable<InsertResult> {
+public abstract class DataGenerator implements Callable<InsertResult> {
 
   private static final String DEFAULT_INSERT_QUERY = "INSERT INTO %s.%s(%s) VALUES(%s)";
 
-  private TableInfo tableInfo;
-  private String schema;
-  private Integer numberOfLinesPerThread;
-  private Integer batchSize;
-  private OjdbcConnector ojdbcConnector;
-  private String name;
+  protected TableInfo tableInfo;
+  protected String schema;
+  protected Integer numberOfLinesPerThread;
+  protected Integer batchSize;
+  protected OjdbcConnector ojdbcConnector;
+  protected String name;
 
   /**
    * Public constructor.
@@ -38,7 +37,7 @@ public class DataGenerator implements Callable<InsertResult> {
       TableInfo tableInfo,
       String schema,
       Integer numberOfLinesPerThread,
-      Integer batchSize, // TODO: felipegc change to int
+      int batchSize,
       OjdbcConnector ojdbcConnector,
       String name) {
     this.tableInfo = tableInfo;
@@ -54,14 +53,7 @@ public class DataGenerator implements Callable<InsertResult> {
 
     long stInsert = System.currentTimeMillis();
 
-    List<ColumnInfo> columns = // TODO: felipegc make it generic
-        Arrays.stream(tableInfo.getColumns())
-            .filter(
-                (c) ->
-                    !c.getOriginalType().equals("bfile")
-                        && !c.getOriginalType().equals("sdo_geometry")
-                        && !c.getOriginalType().equals("rowid"))
-            .collect(Collectors.toList());
+    List<ColumnInfo> columns = transformAndFilterColumnInfo();
 
     String columnsName = columns.stream().map((c) -> c.getName()).collect(Collectors.joining(","));
 
@@ -83,14 +75,8 @@ public class DataGenerator implements Callable<InsertResult> {
       }
     }
 
-    // Thread.sleep(20000);
-
     long enInsert = System.currentTimeMillis();
     long totalTimeInsert = (enInsert - stInsert) / 1000;
-    //    System.out.println(
-    //        String.format(
-    //            "Time spent for inserting %s lines in %s:%s was: %s seconds",
-    //            numberOfLinesPerThread, schema, tableInfo.getName(), totalTimeInsert));
 
     return new InsertResult(this.name, Long.toString(totalTimeInsert));
   }
@@ -109,4 +95,6 @@ public class DataGenerator implements Callable<InsertResult> {
       System.out.println("Batch successfully executed");
     }
   }
+
+  public abstract List<ColumnInfo> transformAndFilterColumnInfo();
 }

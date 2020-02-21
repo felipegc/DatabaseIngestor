@@ -7,23 +7,24 @@ import java.util.Properties;
 
 public class OjdbcConnector {
 
-  //private static final String JDBC_CONNECTION_STRING = "jdbc:oracle:thin:@%s:%s:%s";
-  private static final String JDBC_CONNECTION_STRING = "jdbc:vertica://%s:%s/%s"; // TODO:felipegc make it generic //jdbc:vertica://34.66.206.172:5433/VMart
-
   private Properties connectionProperties;
   private String host;
   private Integer port;
   private String database;
   private Integer maxSessions;
   private Credentials credentials;
+  private String connectionString;
+  private String driverString;
 
   private OjdbcConnector(String host, Integer port, String database, Integer maxSessions,
-      Credentials credentials) {
+      Credentials credentials, String connectionString, String driverString) {
     this.host = host;
     this.port = port;
     this.database = database;
     this.maxSessions = maxSessions;
     this.credentials = credentials;
+    this.connectionString = connectionString;
+    this.driverString = driverString;
   }
 
   /**
@@ -48,10 +49,9 @@ public class OjdbcConnector {
   //TODO: felipegc we should create a pool of connections. There are plenty of libs to do that.
   public Connection getConnection() throws ClassNotFoundException, SQLException {
     try {
-      //Class.forName("oracle.jdbc.driver.OracleDriver"); // TODO:felipegc make it generic
-      Class.forName("com.vertica.jdbc.Driver");
+      Class.forName(driverString);
       return DriverManager.getConnection(
-          String.format(JDBC_CONNECTION_STRING, host, port, database),
+          String.format(connectionString, host, port, database),
           getConnectionProperties());
     } catch (ClassNotFoundException | SQLException ex) {
       System.out.println("Problem while obtaining the connection.");
@@ -96,8 +96,20 @@ public class OjdbcConnector {
     String database;
     Integer sessions;
     Credentials credentials;
+    String connectionString;
+    String driverString;
 
     private Builder() {
+    }
+
+    public Builder withConnectionString(String connectionString) {
+      this.connectionString = connectionString;
+      return this;
+    }
+
+    public Builder withDriverString(String driverString) {
+      this.driverString = driverString;
+      return this;
     }
 
     public Builder withHost(String host) {
@@ -128,7 +140,7 @@ public class OjdbcConnector {
 
     public OjdbcConnector build() {
       return new OjdbcConnector(
-          host, port, database, sessions, credentials);
+          host, port, database, sessions, credentials, connectionString, driverString);
     }
   }
 }
