@@ -154,7 +154,7 @@
                     <headerLocation>java.header</headerLocation>
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
-                    <failOnViolation>false</failOnViolation>
+                    <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                     <failsOnError>true</failsOnError>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>

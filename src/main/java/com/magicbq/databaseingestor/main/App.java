@@ -1,12 +1,12 @@
 package com.magicbq.databaseingestor.main;
 
-import com.magicbq.databaseingestor.objects.Credentials;
 import com.magicbq.databaseingestor.ingestor.IngestorService;
-import com.magicbq.databaseingestor.objects.OjdbcConnector;
 import com.magicbq.databaseingestor.ingestor.OracleIngestorService;
+import com.magicbq.databaseingestor.ingestor.VerticaIngestorService;
+import com.magicbq.databaseingestor.objects.Credentials;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
 import com.magicbq.databaseingestor.schemaconversion.OracleSchemaConversion;
 import com.magicbq.databaseingestor.schemaconversion.SchemaConversion;
-import com.magicbq.databaseingestor.ingestor.VerticaIngestorService;
 import com.magicbq.databaseingestor.schemaconversion.VerticaSchemaConversion;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class App {
 
+  /** Main method which starts the program. */
   public static void main(String[] args) throws Exception {
     if (args.length == 0) {
       throw new Exception("The setup.properties is missing.");
@@ -51,7 +52,6 @@ public class App {
 
     OjdbcConnector ojdbcConnector;
     SchemaConversion schemaConversion;
-
 
     switch (sourceType.toUpperCase()) {
       case "ORACLE":

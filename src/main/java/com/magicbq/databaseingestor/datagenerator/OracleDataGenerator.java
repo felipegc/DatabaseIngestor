@@ -3,7 +3,6 @@ package com.magicbq.databaseingestor.datagenerator;
 import com.magicbq.databaseingestor.objects.OjdbcConnector;
 import com.magicbq.databaseingestor.objects.Schemas.ColumnInfo;
 import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
-import com.magicbq.databaseingestor.datagenerator.DataGenerator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

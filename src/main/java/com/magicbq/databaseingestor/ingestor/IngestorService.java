@@ -1,9 +1,9 @@
 package com.magicbq.databaseingestor.ingestor;
 
-import com.magicbq.databaseingestor.objects.OjdbcConnector;
-import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
 import com.magicbq.databaseingestor.datagenerator.DataGenerator;
 import com.magicbq.databaseingestor.objects.InsertResult;
+import com.magicbq.databaseingestor.objects.OjdbcConnector;
+import com.magicbq.databaseingestor.objects.Schemas.TableInfo;
 import com.magicbq.databaseingestor.schemaconversion.SchemaConversion;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ public abstract class IngestorService {
   int numberOfLinesPerThread;
   int batchSize;
 
+  /** Constructor for IngestorService. */
   public IngestorService(
       OjdbcConnector ojdbcConnector,
       SchemaConversion schemaConversion,
@@ -43,8 +44,13 @@ public abstract class IngestorService {
     executor = Executors.newFixedThreadPool(numberOfThreads);
   }
 
+  /** Gets the object instance for the DataGenerator source. */
   public abstract DataGenerator getDataGenerator(TableInfo tableInfo, String executorName);
 
+  /**
+   * Handles the database ingestion. It gets the table info and distributes the ingestion between
+   * the treads.
+   */
   public void ingestDatabase() throws Exception {
 
     long start = System.currentTimeMillis();

@@ -1,7 +1,5 @@
 # DatabaseIngestor
 .idea/
 target/
-
-DatabaseIngestor.iml
-
 setup.properties
+DatabaseIngestor.iml

@@ -31,6 +31,9 @@ public abstract class SchemaConversion {
 
   public abstract RDBMSBigQueryConverter getBigQueryConverter();
 
+  /**
+   * Gets the Source Definition for the specific schema.
+   */
   public RdbmSourceDefinition getSourceDefinition(String schemaName) throws Exception {
 
     SourceConnectionConfiguration connectionConfiguration =
